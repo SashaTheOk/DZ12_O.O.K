@@ -99,21 +99,17 @@ class AddressBook(UserDict):
 
     def search_contacts(self, query):
         results = []
+        query = query.lower()  # Convert the query to lowercase for case-insensitive search
+
         for record in self.data.values():
-            if query in record.name.value or any(query in phone.value for phone in record.phones):
+            # Convert the name and phone numbers to lowercase for case-insensitive search
+            name_value = record.name.value.lower()
+            phone_values = [phone.value.lower() for phone in record.phones]
+
+            if query in name_value or any(query in phone for phone in phone_values):
                 results.append(record)
+
         return results
-
-    def iterator(self):
-        records = list(self.data.values())
-        total_records = len(records)
-        current_page = 0
-
-        while current_page * self.page_size < total_records:
-            start_index = current_page * self.page_size
-            end_index = (current_page + 1) * self.page_size
-            yield records[start_index:end_index]
-            current_page += 1
 
 if __name__ == "__main__":
     address_book = AddressBook()
